@@ -36,7 +36,7 @@ import dji.lifecycle.annotation.OnProductDisconnected;
 @AutoService(Processor.class)
 public class LifecycleAnnotationProcessor extends AbstractProcessor {
 
-    private static final String PACKAGE_NAME = "com.dji.lifecycle.observer.drone";
+    private static final String PACKAGE_NAME = "dji.lifecycle.observer.drone";
 
     private Filer filer;
     private Messager messager;
@@ -52,7 +52,6 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
-        System.out.println("jojo, begin process " + annotations);
         if (!roundEnvironment.processingOver() && !annotations.isEmpty()) {
             Set<TypeElement> typeElements = ProcessingUtils.getTypeElementsToProcess(
                     roundEnvironment.getRootElements(),

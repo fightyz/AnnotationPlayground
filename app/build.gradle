@@ -16,12 +16,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    android {
+        compileOptions {
+            sourceCompatibility 1.8
+            targetCompatibility 1.8
+        }
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    implementation project(':DJILifecycleInterface')
+    implementation project(':DJILifecycle')
+
     implementation project(':DJILifecycleAnnotation')
     annotationProcessor project(':DJILifecycleProcessor')
     testImplementation 'junit:junit:4.12'

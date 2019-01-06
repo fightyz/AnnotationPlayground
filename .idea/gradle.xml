@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/DJILifecycle" />
             <option value="$PROJECT_DIR$/DJILifecycleAnnotation" />
+            <option value="$PROJECT_DIR$/DJILifecycleInterface" />
             <option value="$PROJECT_DIR$/DJILifecycleProcessor" />
             <option value="$PROJECT_DIR$/app" />
           </set>

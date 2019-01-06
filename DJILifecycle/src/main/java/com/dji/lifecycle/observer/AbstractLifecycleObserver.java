@@ -1,12 +1,12 @@
 package com.dji.lifecycle.observer;
 
+import com.dji.lifecycle.event.IEvent;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
 
 /**
  * Copyright ©2018 DJI All Rights Reserved.
@@ -21,19 +21,24 @@ public abstract class AbstractLifecycleObserver implements ILifecycle {
 
     private static Executor executors = Executors.newSingleThreadExecutor(r -> new Thread(r, "lifecycle"));
 
-    protected PublishSubject<Event> publishSubject = PublishSubject.create();
+//    protected PublishSubject<IEvent> publishSubject = PublishSubject.create();
 
     protected AbstractLifecycleObserver() {
-        subscribe(publishSubject.hide());
+//        subscribe(publishSubject.hide());
     }
 
-    @Override
-    public PublishSubject<Event> getPublishSubject() {
-        return publishSubject;
-    }
+//    @Override
+//    public PublishSubject<IEvent> getPublishSubject() {
+//        return publishSubject;
+//    }
 
-    private void subscribe(Observable<Event> observable) {
+    private void subscribe(Observable<IEvent> observable) {
         observable.observeOn(Schedulers.from(executors))
                 .subscribe(event -> handleLifecycleEvent(event));
     }
+
+//    @Override
+//    public void removeObserver(@NonNull ILifecycleObserver observer) {
+//
+//    }
 }

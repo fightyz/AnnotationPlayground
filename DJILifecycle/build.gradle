@@ -3,6 +3,3 @@ apply plugin: 'java-library'
 dependencies {
     implementation "io.reactivex.rxjava2:rxjava:2.2.5"
 }
-
-sourceCompatibility = "8"
-targetCompatibility = "8"
