@@ -1,9 +1,13 @@
 package com.dji.lifecycle.observer.drone;
 
+import com.dji.lifecycle.LifecycleException;
+import com.dji.lifecycle.event.DroneEvent;
 import com.dji.lifecycle.event.IEvent;
 import com.dji.lifecycle.interfaces.sample.FpvLifecycleTest;
 import com.dji.lifecycle.interfaces.sample.FpvLifecycleTest2;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,36 +22,40 @@ import java.util.Set;
  */
 public abstract class AbstractObserver2 {
 
-    private static Map<Class, ObserverHolder> triplets = new HashMap();
+    private static Map<Class, ObserverHolder2> triplets = new HashMap<>();
     {
-        triplets.put(FpvLifecycleTest.class, new ObserverHolder(FpvLifecycleTest.class));
-        triplets.put(FpvLifecycleTest2.class, new ObserverHolder(FpvLifecycleTest2.class));
+        triplets.put(FpvLifecycleTest.class, new ObserverHolder2(FpvLifecycleTest.class));
+        triplets.put(FpvLifecycleTest2.class, new ObserverHolder2(FpvLifecycleTest2.class));
     }
 
     private Set<Class> observerClasses = new HashSet<>();
 
     AbstractObserver2(Class...classes) {
-        for (Class clazz : classes) {
-            observerClasses.add(clazz);
-        }
+        observerClasses.addAll(Arrays.asList(classes));
     }
 
-    protected Set<ObserverHolder> getObservers() {
-        Set<ObserverHolder> observers = new HashSet();
-        for (Class clazz : observerClasses) {
-            if (clazz == FpvLifecycleTest.class) {
+    protected Set<ObserverHolder2> getObservers() {
+        Set<ObserverHolder2> observers = new HashSet<>();
+        try {
+            for (Class clazz : observerClasses) {
                 if (triplets.get(clazz).counter == 0) {
-                    triplets.get(clazz).instance = new FpvLifecycleTest();
+                    triplets.get(clazz).instance = clazz.newInstance();
                 }
+                observers.add(triplets.get(clazz));
             }
-            if (clazz == FpvLifecycleTest2.class) {
-                if (triplets.get(clazz).counter == 0) {
-                    triplets.get(clazz).instance = new FpvLifecycleTest2();
-                }
-            }
-            observers.add(triplets.get(clazz));
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new LifecycleException("Could not create instance.", e);
         }
+
         return observers;
+    }
+
+    protected Set<ObserverHolder2> getObserversByEvent(IEvent event) {
+        DroneEvent droneEvent = (DroneEvent) event;
+        Set<ObserverHolder2> observers = new HashSet<>();
+        if (droneEvent.isProductLifecycle()) {
+
+        }
     }
 
     protected void recycleObservers() {
@@ -59,31 +67,4 @@ public abstract class AbstractObserver2 {
     }
 
     protected abstract void notifyEvent(IEvent event);
-
-//    public static class ObserverHolder {
-//
-//        protected Class clazz;
-//
-//        protected Object instance;
-//
-//        protected int counter;
-//
-//        private ObserverHolder(Class clazz) {
-//            this.clazz = clazz;
-//        }
-//
-//        @Override
-//        public boolean equals(Object o) {
-//            if (this == o) return true;
-//            if (!(o instanceof ObserverHolder)) return false;
-//            ObserverHolder that = (ObserverHolder) o;
-//            return Objects.equals(instance, that.instance);
-//        }
-//
-//        @Override
-//        public int hashCode() {
-//
-//            return Objects.hash(instance);
-//        }
-//    }
 }

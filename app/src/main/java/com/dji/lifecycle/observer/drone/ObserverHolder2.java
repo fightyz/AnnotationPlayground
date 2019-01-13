@@ -9,7 +9,7 @@ import java.util.Objects;
  * @Data: 1/5/19 3:49 PM
  * Description: ${TODO}
  */
-public class ObserverHolder {
+public class ObserverHolder2 {
 
     Class clazz;
 
@@ -17,15 +17,15 @@ public class ObserverHolder {
 
     int counter;
 
-    ObserverHolder(Class clazz) {
+    ObserverHolder2(Class clazz) {
         this.clazz = clazz;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ObserverHolder)) return false;
-        ObserverHolder that = (ObserverHolder) o;
+        if (!(o instanceof ObserverHolder2)) return false;
+        ObserverHolder2 that = (ObserverHolder2) o;
         return Objects.equals(instance, that.instance);
     }
 

@@ -28,7 +28,7 @@ public abstract class AbstractObserver<T extends IDroneLifecycleObserver> {
     {
         triplets.put(FpvLifecycleTest.class, new ObserverHolder());
         triplets.put(FpvLifecycleTest2.class, new ObserverHolder());
-//        triplets.put(DJIGSManager.class, new ObserverHolder());
+//        triplets.put(DJIGSManager.class, new ObserverHolder2());
     }
 
     /**
