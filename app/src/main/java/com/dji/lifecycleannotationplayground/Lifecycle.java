@@ -2,15 +2,14 @@ package com.dji.lifecycleannotationplayground;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.os.Bundle;
 
 import com.dji.lifecycle.ProductConnectionListener;
 import com.dji.lifecycle.event.ActivityEvent;
 import com.dji.lifecycle.event.DroneEvent;
 import com.dji.lifecycle.event.IEvent;
-import com.dji.lifecycle.observer.LifecycleSubscriberInfoIndex;
 import com.dji.lifecycle.observer.AbstractObserver2;
+import com.dji.lifecycle.observer.LifecycleSubscriberInfoIndex;
 import com.dji.lifecycle.observer.activity.ActivityObserver;
 import com.dji.lifecycle.observer.drone.DroneObserver2;
 
@@ -19,10 +18,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class Lifecycle implements ProductConnectionListener {
 
@@ -30,7 +26,6 @@ public class Lifecycle implements ProductConnectionListener {
 
     private static Lifecycle sInstance;
 
-    private Context applicationContext;
     private List<AbstractObserver2> observerList = new LinkedList<>();
 
     public static synchronized void build(Application application) {
@@ -48,7 +43,6 @@ public class Lifecycle implements ProductConnectionListener {
                     onProductConnected();
                 });
 
-        this.applicationContext = applicationContext;
         observerList.add(new DroneObserver2(new LifecycleSubscriberInfoIndex()));
         observerList.add(new ActivityObserver(new LifecycleSubscriberInfoIndex()));
 

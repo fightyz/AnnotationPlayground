@@ -1,13 +1,9 @@
 package com.dji.lifecycle.observer;
 
-import com.dji.lifecycle.LifecycleException;
-import com.dji.lifecycle.interfaces.sample.FpvLifecycleTest;
-import com.dji.lifecycle.interfaces.sample.FpvLifecycleTest2;
 import com.dji.lifecycle.meta.SimpleSubscriberInfo;
 import com.dji.lifecycle.meta.SubscriberInfo;
 import com.dji.lifecycle.meta.SubscriberInfoIndex;
 import com.dji.lifecycle.meta.SubscriberMethodInfo;
-import com.dji.lifecycle.ObserverHolder2;
 import com.dji.lifecycleannotationplayground.AnnotationTest1;
 
 import java.util.HashMap;
@@ -15,7 +11,6 @@ import java.util.Map;
 
 import dji.lifecycle.annotation.OnActivityCreated;
 import dji.lifecycle.annotation.OnProductConnected;
-import dji.lifecycle.annotation.OnProductDisconnected;
 
 /**
  * 由 apt 生成

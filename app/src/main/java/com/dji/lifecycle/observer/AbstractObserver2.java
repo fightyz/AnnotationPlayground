@@ -3,8 +3,6 @@ package com.dji.lifecycle.observer;
 import com.dji.lifecycle.LifecycleException;
 import com.dji.lifecycle.ObserverHolder2;
 import com.dji.lifecycle.event.IEvent;
-import com.dji.lifecycle.interfaces.sample.FpvLifecycleTest;
-import com.dji.lifecycle.interfaces.sample.FpvLifecycleTest2;
 import com.dji.lifecycleannotationplayground.AnnotationTest1;
 
 import java.util.Arrays;

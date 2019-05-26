@@ -1,1 +1,1 @@
-include ':app', ':DJILifecycleAnnotation', ':DJILifecycleProcessor', ':DJILifecycle', ':DJILifecycleInterface'
+include ':app', ':LifecycleAnnotation', ':LifecycleProcessor', ':Lifecycle'
