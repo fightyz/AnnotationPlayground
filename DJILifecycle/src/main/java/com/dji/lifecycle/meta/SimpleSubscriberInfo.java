@@ -5,6 +5,7 @@ import com.dji.lifecycle.SubscriberMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class SimpleSubscriberInfo implements SubscriberInfo {
 
@@ -41,5 +42,13 @@ public class SimpleSubscriberInfo implements SubscriberInfo {
             throw new LifecycleException("Could not find subscriber method in " + mSubscriberClass +
             ". Maybe a missing ProGuard rule?", e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleSubscriberInfo{" +
+                "mSubscriberClass=" + mSubscriberClass +
+                ", mMethodInfos=" + Arrays.toString(mMethodInfos) +
+                '}';
     }
 }

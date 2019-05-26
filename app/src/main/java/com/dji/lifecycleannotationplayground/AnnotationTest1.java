@@ -2,6 +2,7 @@ package com.dji.lifecycleannotationplayground;
 
 import android.util.Log;
 
+import dji.lifecycle.annotation.OnActivityCreated;
 import dji.lifecycle.annotation.OnProductConnected;
 
 /**
@@ -18,5 +19,10 @@ public class AnnotationTest1 {
     @OnProductConnected
     public void onProductConnected() {
         Log.e(TAG, "onProductConnected");
+    }
+
+    @OnActivityCreated
+    public void onActivityCreated() {
+        Log.e(TAG, "onActivityCreated");
     }
 }

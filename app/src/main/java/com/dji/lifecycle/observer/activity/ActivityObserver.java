@@ -1,10 +1,11 @@
-package com.dji.lifecycle.observer.drone;
+package com.dji.lifecycle.observer.activity;
 
 import android.util.Log;
 
 import com.dji.lifecycle.LifecycleException;
 import com.dji.lifecycle.ObserverHolder2;
 import com.dji.lifecycle.SubscriberMethod;
+import com.dji.lifecycle.event.ActivityEvent;
 import com.dji.lifecycle.event.DroneEvent;
 import com.dji.lifecycle.event.IEvent;
 import com.dji.lifecycle.meta.SubscriberInfo;
@@ -14,45 +15,42 @@ import com.dji.lifecycleannotationplayground.AnnotationTest1;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
+
+import dji.lifecycle.annotation.OnActivityCreated;
 import dji.lifecycle.annotation.OnProductConnected;
 import dji.lifecycle.annotation.OnProductDisconnected;
+import dji.lifecycle.annotation.onActivityDestroy;
 
-/**
- * 由 apt 生成，因为需要 FpvLifecycleTest, FpvLifecycleTest2 等类的信息。
- * subscriberInfoIndex 可以由 dagger2 来注入。
- */
-public class DroneObserver2 extends AbstractObserver2 {
+public class ActivityObserver extends AbstractObserver2 {
 
     private SubscriberInfoIndex subscriberInfoIndex;
 
-    public DroneObserver2(SubscriberInfoIndex subscriberInfoIndex) {
+    public ActivityObserver(SubscriberInfoIndex subscriberInfoIndex) {
         super(AnnotationTest1.class);
         this.subscriberInfoIndex = subscriberInfoIndex;
     }
 
     @Override
     public void notifyEvent(IEvent event) {
-        if (!(event instanceof DroneEvent)) {
+        if (!(event instanceof ActivityEvent)) {
             return;
         }
-        DroneEvent droneEvent = (DroneEvent) event;
+        ActivityEvent activityEvent = (ActivityEvent) event;
         Set<ObserverHolder2> observers = getObservers();
         for (ObserverHolder2 holder : observers) {
             Class clazz = holder.clazz;
 
-            if (droneEvent.isProductConnected()) {
+            if (activityEvent.isActivityCreated()) {
                 incrementHolder(holder);
             }
 
             SubscriberInfo subscriberInfo = subscriberInfoIndex.getSubscriberInfo(clazz);
-            Log.e("jojo", "notifyEvent: " + subscriberInfo);
             SubscriberMethod[] subscriberMethods = subscriberInfo.getSubscriberMethods();
             try {
                 for (SubscriberMethod subscriberMethod : subscriberMethods) {
-                    Log.e("jojo", "subscriberMethod: " + subscriberMethod);
                     Class annotationType = subscriberMethod.mAnnotation.annotationType();
-                    if (annotationType.equals(OnProductConnected.class) ||
-                            annotationType.equals(OnProductDisconnected.class)) {
+                    if (annotationType.equals(OnActivityCreated.class) ||
+                            annotationType.equals(onActivityDestroy.class)) {
                         subscriberMethod.mMethod.invoke(holder.instance);
                     }
                 }
@@ -62,7 +60,7 @@ public class DroneObserver2 extends AbstractObserver2 {
                 throw new LifecycleException(e);
             }
 
-            if (droneEvent.isProductDisconnected()) {
+            if (activityEvent.isActivityDestroy()) {
                 decrementHolder(holder);
             }
         }

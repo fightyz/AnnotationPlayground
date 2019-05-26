@@ -1,4 +1,4 @@
-package com.dji.lifecycle.observer.drone;
+package com.dji.lifecycle;
 
 import java.util.Objects;
 
@@ -7,17 +7,17 @@ import java.util.Objects;
  *
  * @Author: joe.yang@dji.com
  * @Data: 1/5/19 3:49 PM
- * Description: ${TODO}
+ * Description: 动态生成
  */
 public class ObserverHolder2 {
 
-    Class clazz;
+    public Class clazz;
 
-    Object instance;
+    public Object instance;
 
-    int counter;
+    public int counter;
 
-    ObserverHolder2(Class clazz) {
+    public ObserverHolder2(Class clazz) {
         this.clazz = clazz;
     }
 

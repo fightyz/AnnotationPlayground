@@ -43,4 +43,13 @@ public class SubscriberMethod {
     public int hashCode() {
         return mMethod.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "SubscriberMethod{" +
+                "mMethod=" + mMethod +
+                ", mAnnotation=" + mAnnotation +
+                ", mMethodString='" + mMethodString + '\'' +
+                '}';
+    }
 }
