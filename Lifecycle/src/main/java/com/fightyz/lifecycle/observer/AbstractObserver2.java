@@ -3,9 +3,7 @@ package com.fightyz.lifecycle.observer;
 import com.fightyz.lifecycle.LifecycleException;
 import com.fightyz.lifecycle.ObserverHolder2;
 import com.fightyz.lifecycle.event.IEvent;
-import com.fightyz.lifecycleannotationplayground.AnnotationTest1;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,22 +20,15 @@ public abstract class AbstractObserver2 {
 
     private static Map<Class, ObserverHolder2> triplets = new HashMap<>();
 
-    {
-        // 由 apt 添加，所有关心生命周期的类集合
-//        triplets.put(FpvLifecycleTest.class, new ObserverHolder2(FpvLifecycleTest.class));
-//        triplets.put(FpvLifecycleTest2.class, new ObserverHolder2(FpvLifecycleTest2.class));
-        triplets.put(AnnotationTest1.class, new ObserverHolder2(AnnotationTest1.class));
-    }
+    private Set<Class> observerClasses = new HashSet<>();
 
-    protected Set<Class> observerClasses = new HashSet<>();
+    AbstractObserver2() {}
 
-    /**
-     * 每个具体的 Observer 传进来的类
-     *
-     * @param classes
-     */
-    public AbstractObserver2(Class... classes) {
-        observerClasses.addAll(Arrays.asList(classes));
+    protected void addObserverClasses(Set<Class<?>> classes) {
+        for (Class<?> klass : classes) {
+            triplets.put(klass, new ObserverHolder2(klass));
+        }
+        observerClasses.addAll(classes);
     }
 
     protected Set<ObserverHolder2> getObservers() {

@@ -1,1 +1,1 @@
-include ':app', ':LifecycleAnnotation', ':LifecycleProcessor', ':Lifecycle'
+include ':app', ':LifecycleAnnotation', ':LifecycleProcessor', ':Lifecycle', ':testandroidmodule'

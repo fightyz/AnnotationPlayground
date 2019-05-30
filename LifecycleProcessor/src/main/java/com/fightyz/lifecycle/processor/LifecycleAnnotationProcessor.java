@@ -28,6 +28,7 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
@@ -35,11 +36,15 @@ import javax.tools.Diagnostic;
 @AutoService(Processor.class)
 public class LifecycleAnnotationProcessor extends AbstractProcessor {
 
-    private static final String PACKAGE_NAME = "dji.lifecycle.observer.drone";
+    private static final String PACKAGE_NAME = "com.fightyz.lifecycle";
+    private static final String OBSERVER_HOLDER_SIMPLE_NAME = "ObserverHolder";
+    private static final String ABSTRACT_OBSERVER_SIMPLE_NAME = "AbstractObserver";
 
     private Filer filer;
     private Messager messager;
     private Elements elementUtils;
+
+    private Set<TypeElement> typeElements;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -52,16 +57,18 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
         if (!roundEnvironment.processingOver() && !annotations.isEmpty()) {
-            Set<TypeElement> typeElements = ProcessingUtils.getTypeElementsToProcess(
-                    roundEnvironment.getRootElements(),
-                    annotations);
+            typeElements = ProcessingUtils.getTypeElementsToProcess(
+                    roundEnvironment.getRootElements(), annotations);
 
             for (TypeElement typeElement : typeElements) {
                 String packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
                 String typeName = typeElement.getSimpleName().toString();
-                System.out.println("jojo, " + packageName + ", " + typeName);
-
-
+                PackageElement packageElement = (PackageElement) typeElement.getEnclosingElement();
+                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package name %s", packageName));
+                messager.printMessage(Diagnostic.Kind.NOTE, String.format("class name %s", typeName));
+                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package simple name %s", packageElement.getSimpleName()));
+                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package enclosing element %s", packageElement.getEnclosingElement()));
+                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package enclosed element %s", packageElement.getEnclosedElements()));
             }
 
             generateObserverHolder();
@@ -72,15 +79,22 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
     }
 
     private void generateAbstractObserver() {
-        ClassName abstractObserver = ClassName.get(PACKAGE_NAME, "AbstractObserver");
+        ClassName abstractObserver = ClassName.get(PACKAGE_NAME, ABSTRACT_OBSERVER_SIMPLE_NAME);
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(abstractObserver)
                 .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC);
 
-        ClassName observerHolder = ClassName.get(PACKAGE_NAME, "ObserverHolder");
+        ClassName observerHolder = ClassName.get(PACKAGE_NAME, OBSERVER_HOLDER_SIMPLE_NAME);
         FieldSpec triplets = FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(Class.class), observerHolder),
                 "triplets", Modifier.PRIVATE, Modifier.STATIC)
                 .initializer("new $T()", HashMap.class)
                 .build();
+
+        CodeBlock.Builder staticBlockBuilder = CodeBlock.builder();
+        for (TypeElement typeElement : typeElements) {
+            staticBlockBuilder.addStatement("$N.put($T.class, new " + OBSERVER_HOLDER_SIMPLE_NAME + "($T.class))",
+                    triplets, typeElement, typeElement);
+        }
+        CodeBlock staticBlock = staticBlockBuilder.build();
 
         FieldSpec observerClasses = FieldSpec.builder(ParameterizedTypeName.get(Set.class, Class.class),
                 "observerClasses", Modifier.PRIVATE)
@@ -96,6 +110,7 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
         classBuilder
                 .addField(triplets)
                 .addField(observerClasses)
+                .addStaticBlock(staticBlock)
                 .addMethod(constructor);
         try {
             JavaFile.builder(PACKAGE_NAME,
@@ -108,7 +123,7 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
     }
 
     private void generateObserverHolder() {
-        ClassName observerHolder = ClassName.get(PACKAGE_NAME, "ObserverHolder");
+        ClassName observerHolder = ClassName.get(PACKAGE_NAME, OBSERVER_HOLDER_SIMPLE_NAME);
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(observerHolder)
                 .addModifiers(Modifier.PUBLIC);
 
@@ -163,7 +178,6 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
                 .addStatement("return $T.equals($N, that.$N)", Objects.class, field, field)
                 .build();
     }
-
 
 
     @Override
