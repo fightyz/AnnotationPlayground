@@ -23,11 +23,9 @@ import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -61,10 +59,6 @@ import de.greenrobot.common.ListMap;
 public class LifecycleAnnotationProcessor extends AbstractProcessor {
 
     public static final String OPTION_LIFECYCLE_INDEX = "lifecycleIndex";
-
-    private static final String PACKAGE_NAME = "com.fightyz.lifecycle";
-    private static final String OBSERVER_HOLDER_SIMPLE_NAME = "ObserverHolder";
-    private static final String ABSTRACT_OBSERVER_SIMPLE_NAME = "AbstractObserver";
 
     private static final String PRODUCT_SUBSCRIBER_INDEX_FIELD_NAME = "PRODUCT_SUBSCRIBER_INDEX";
     private static final String ACTIVITY_SUBSCRIBER_INDEX_FIELD_NAME = "ACTIVITY_SUBSCRIBER_INDEX";
@@ -128,10 +122,6 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
             }
             collectSubscribers(annotations, roundEnvironment, messager);
             generateIndexFile(indexPackage, clazz);
-
-//            generateObserverHolder();
-
-//            generateAbstractObserver();
         }
         return true;
     }
@@ -294,11 +284,6 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
                 }
             }
             String subscriberMethodInfoElements = String.join(",", subscriberMethodInfoBlockList);
-            TypeSpec subscriberMethodInfoBlock = TypeSpec.anonymousClassBuilder("")
-                    .addSuperinterface(ArrayTypeName.get(SubscriberMethodInfo.class))
-                    .addInitializerBlock(CodeBlock.builder()
-                            .addStatement(subscriberMethodInfoElements).build())
-                    .build();
 
             String subscriberMethodInfoArrayBlock = CodeBlock.builder()
                     .add("new $T[]{$L}", SubscriberMethodInfo.class, subscriberMethodInfoElements)
@@ -398,106 +383,5 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
             return false;
         }
         return true;
-    }
-
-    private void generateAbstractObserver() {
-        ClassName abstractObserver = ClassName.get(PACKAGE_NAME, ABSTRACT_OBSERVER_SIMPLE_NAME);
-        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(abstractObserver)
-                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC);
-
-        ClassName observerHolder = ClassName.get(PACKAGE_NAME, OBSERVER_HOLDER_SIMPLE_NAME);
-        FieldSpec triplets = FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(Class.class), observerHolder),
-                "triplets", Modifier.PRIVATE, Modifier.STATIC)
-                .initializer("new $T()", HashMap.class)
-                .build();
-
-        CodeBlock.Builder staticBlockBuilder = CodeBlock.builder();
-        for (TypeElement typeElement : typeElements) {
-            staticBlockBuilder.addStatement("$N.put($T.class, new " + OBSERVER_HOLDER_SIMPLE_NAME + "($T.class))",
-                    triplets, typeElement, typeElement);
-        }
-        CodeBlock staticBlock = staticBlockBuilder.build();
-
-        FieldSpec observerClasses = FieldSpec.builder(ParameterizedTypeName.get(Set.class, Class.class),
-                "observerClasses", Modifier.PRIVATE)
-                .initializer("new $T()", HashSet.class)
-                .build();
-
-        MethodSpec constructor = MethodSpec.constructorBuilder().varargs().addParameter(Class[].class, "classes")
-                .beginControlFlow("for (Class clazz : classes)")
-                .addStatement("$N.add(clazz)", observerClasses)
-                .endControlFlow()
-                .build();
-
-        classBuilder
-                .addField(triplets)
-                .addField(observerClasses)
-                .addStaticBlock(staticBlock)
-                .addMethod(constructor);
-        try {
-            JavaFile.builder(PACKAGE_NAME,
-                    classBuilder.build())
-                    .build()
-                    .writeTo(filer);
-        } catch (IOException e) {
-            messager.printMessage(Diagnostic.Kind.ERROR, e.toString());
-        }
-    }
-
-    private void generateObserverHolder() {
-        ClassName observerHolder = ClassName.get(PACKAGE_NAME, OBSERVER_HOLDER_SIMPLE_NAME);
-        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(observerHolder)
-                .addModifiers(Modifier.PUBLIC);
-
-        FieldSpec clazz = FieldSpec.builder(Class.class, "clazz").build();
-        FieldSpec instance = FieldSpec.builder(Object.class, "instance").build();
-        FieldSpec counter = FieldSpec.builder(int.class, "counter").build();
-
-        MethodSpec constructor = MethodSpec.constructorBuilder().addParameter(Class.class, "clazz")
-                .addStatement("this.$N = clazz", clazz)
-                .build();
-
-        MethodSpec equals = MethodSpec.methodBuilder("equals")
-                .addAnnotation(Override.class)
-                .returns(boolean.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(Object.class, "o")
-                .addCode(equalsCode(observerHolder, "o", instance))
-                .build();
-
-        MethodSpec hashCode = MethodSpec.methodBuilder("hashCode")
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Override.class)
-                .returns(int.class)
-                .addStatement("return Objects.hash($N)", instance)
-                .build();
-
-        classBuilder.addField(clazz)
-                .addField(instance)
-                .addField(counter)
-                .addMethod(constructor)
-                .addMethod(equals)
-                .addMethod(hashCode);
-        try {
-            JavaFile.builder(PACKAGE_NAME,
-                    classBuilder.build())
-                    .build()
-                    .writeTo(filer);
-        } catch (IOException e) {
-            messager.printMessage(Diagnostic.Kind.ERROR, e.toString());
-        }
-    }
-
-    private CodeBlock equalsCode(ClassName className, String parameter, FieldSpec field) {
-        return CodeBlock.builder()
-                .beginControlFlow("if (this == $N)", parameter)
-                .addStatement("return true")
-                .endControlFlow()
-                .beginControlFlow("if (!($N instanceof ObserverHolder))", parameter)
-                .addStatement("return false")
-                .endControlFlow()
-                .addStatement("$N that = ($N) $N", className.simpleName(), className.simpleName(), parameter)
-                .addStatement("return $T.equals($N, that.$N)", Objects.class, field, field)
-                .build();
     }
 }
