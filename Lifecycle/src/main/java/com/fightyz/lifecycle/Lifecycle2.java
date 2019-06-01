@@ -3,6 +3,7 @@ package com.fightyz.lifecycle;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.fightyz.lifecycle.event.ActivityEvent;
 import com.fightyz.lifecycle.event.IEvent;
@@ -19,6 +20,8 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class Lifecycle2 implements ProductConnectionListener {
+
+    private static final String TAG = "Lifecycle2";
 
     private static final String SPECIFIC_ACTIVITY = "MainActivity";
 
@@ -106,6 +109,9 @@ public class Lifecycle2 implements ProductConnectionListener {
             Lifecycle2 lifecycle2 = Lifecycle2.build(application);
             int size = indexList.size();
             SubscriberInfoIndex[] indexArray = indexList.toArray(new SubscriberInfoIndex[size]);
+            for (SubscriberInfoIndex subscriberInfoIndex : indexArray) {
+                Log.d(TAG, "build subscriberInfoIndex " + subscriberInfoIndex);
+            }
             ActivityObserver activityObserver = new ActivityObserver(indexArray);
             ProductObserver2 productObserver = new ProductObserver2(indexArray);
             lifecycle2.activityObserver = activityObserver;

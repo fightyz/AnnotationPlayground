@@ -9,18 +9,17 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [lifecycleIndex : 'com.fightyz.lifecycle.MyLifecycleIndex']
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    android {
-        compileOptions {
-            sourceCompatibility 1.8
-            targetCompatibility 1.8
         }
     }
 
@@ -37,7 +36,7 @@ dependencies {
 
     implementation project(':Lifecycle')
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.4'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
     implementation project(':testandroidmodule')

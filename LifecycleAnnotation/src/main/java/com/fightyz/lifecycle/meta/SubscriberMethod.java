@@ -1,4 +1,4 @@
-package com.fightyz.lifecycle;
+package com.fightyz.lifecycle.meta;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -12,6 +12,7 @@ public class SubscriberMethod {
     public SubscriberMethod(Method method, Annotation annotation) {
         this.mMethod = method;
         mAnnotation = annotation;
+        mMethodString = mMethod.getName();
     }
 
     @Override

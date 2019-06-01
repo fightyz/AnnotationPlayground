@@ -9,7 +9,6 @@ import com.fightyz.lifecycle.meta.SubscriberMethodInfo;
 import com.fightyz.lifecycleannotationplayground.AnnotationTest1;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class MyLifecycleSubscriberInfoIndex implements SubscriberInfoIndex {
         PRODUCT_SUBSCRIBER_INDEX = new HashMap<>();
         ACTIVITY_SUBSCRIBER_INDEX = new HashMap<>();
 
-        putProductIndex(new SimpleSubscriberInfo(AnnotationTest1.class, new SubscriberMethodInfo[] {
+        putProductIndex(new SimpleSubscriberInfo(AnnotationTest1.class, new SubscriberMethodInfo[]{
                 new SubscriberMethodInfo("onProductConnected", OnProductConnected.class)
         }));
 
@@ -39,21 +38,14 @@ public class MyLifecycleSubscriberInfoIndex implements SubscriberInfoIndex {
         SubscriberInfo productInfo = PRODUCT_SUBSCRIBER_INDEX.get(subscriberClass);
         SubscriberInfo activityInfo = ACTIVITY_SUBSCRIBER_INDEX.get(subscriberClass);
 
-        if (productInfo != null) {
+        if (productInfo != null && activityInfo != null) {
+            SubscriberInfo result = SimpleSubscriberInfo.combine(productInfo, activityInfo);
+            return result;
+        } else if (productInfo != null) {
             return productInfo;
-        } else if (activityInfo != null) {
-            return activityInfo;
         } else {
-            return null;
+            return activityInfo;
         }
-    }
-
-    @Override
-    public Set<Class<?>> getSubscriberClasses() {
-        Set<Class<?>> classes = new HashSet<>();
-        classes.addAll(PRODUCT_SUBSCRIBER_INDEX.keySet());
-        classes.addAll(ACTIVITY_SUBSCRIBER_INDEX.keySet());
-        return classes;
     }
 
     @Override

@@ -12,6 +12,11 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [lifecycleIndex : 'com.fightyz.lifecycle.TestAndroidModuleLifecycleIndex']
+            }
+        }
     }
 
     buildTypes {
@@ -27,6 +32,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(':LifecycleAnnotation')
+    annotationProcessor project(':LifecycleProcessor')
     implementation project(':Lifecycle')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'

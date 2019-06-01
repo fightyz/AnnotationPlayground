@@ -2,9 +2,9 @@ package com.fightyz.lifecycle.observer;
 
 import com.fightyz.lifecycle.LifecycleException;
 import com.fightyz.lifecycle.ObserverHolder2;
-import com.fightyz.lifecycle.SubscriberMethod;
+import com.fightyz.lifecycle.meta.SubscriberMethod;
 import com.fightyz.lifecycle.annotation.OnActivityCreated;
-import com.fightyz.lifecycle.annotation.onActivityDestroy;
+import com.fightyz.lifecycle.annotation.OnActivityDestroy;
 import com.fightyz.lifecycle.event.ActivityEvent;
 import com.fightyz.lifecycle.event.IEvent;
 import com.fightyz.lifecycle.meta.SubscriberInfo;
@@ -23,6 +23,9 @@ public class ActivityObserver extends AbstractObserver2 {
     private Set<SubscriberInfoIndex> subscriberInfoIndexes = new HashSet<>();
 
     public ActivityObserver(SubscriberInfoIndex... subscriberInfoIndexes) {
+        if (subscriberInfoIndexes == null || subscriberInfoIndexes.length == 0) {
+            throw new RuntimeException("ActivityObserver subscriberInfoIndexes");
+        }
         for (SubscriberInfoIndex infoIndex : subscriberInfoIndexes) {
             addObserverClasses(infoIndex.getActivitySubscriberClasses());
         }
@@ -53,7 +56,7 @@ public class ActivityObserver extends AbstractObserver2 {
                     for (SubscriberMethod subscriberMethod : subscriberMethods) {
                         Class annotationType = subscriberMethod.mAnnotation.annotationType();
                         if (annotationType.equals(OnActivityCreated.class) ||
-                                annotationType.equals(onActivityDestroy.class)) {
+                                annotationType.equals(OnActivityDestroy.class)) {
                             subscriberMethod.mMethod.invoke(holder.instance);
                         }
                     }

@@ -21,17 +21,28 @@ public class ObserverHolder2 {
         this.clazz = clazz;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ObserverHolder2)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         ObserverHolder2 that = (ObserverHolder2) o;
-        return Objects.equals(instance, that.instance);
+        return counter == that.counter &&
+                Objects.equals(clazz, that.clazz) &&
+                Objects.equals(instance, that.instance);
     }
 
     @Override
     public int hashCode() {
+        return Objects.hash(clazz, instance, counter);
+    }
 
-        return Objects.hash(instance);
+    @Override
+    public String toString() {
+        return "ObserverHolder2{" +
+                "clazz=" + clazz +
+                ", instance=" + instance +
+                ", counter=" + counter +
+                '}';
     }
 }

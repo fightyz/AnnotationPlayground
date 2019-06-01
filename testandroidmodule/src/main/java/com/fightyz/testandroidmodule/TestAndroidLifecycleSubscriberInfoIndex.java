@@ -8,18 +8,15 @@ import com.fightyz.lifecycle.meta.SubscriberInfoIndex;
 import com.fightyz.lifecycle.meta.SubscriberMethodInfo;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class TestAndroidLifecycleSubscriberInfoIndex implements SubscriberInfoIndex {
 
-    private static final Map<Class<?>, SubscriberInfo> PRODUCT_SUBSCRIBER_INDEX;
-    private static final Map<Class<?>, SubscriberInfo> ACTIVITY_SUBSCRIBER_INDEX;
+    private static final Map<Class<?>, SubscriberInfo> PRODUCT_SUBSCRIBER_INDEX = new HashMap<>();
+    private static final Map<Class<?>, SubscriberInfo> ACTIVITY_SUBSCRIBER_INDEX = new HashMap<>();
 
     static {
-        PRODUCT_SUBSCRIBER_INDEX = new HashMap<>();
-        ACTIVITY_SUBSCRIBER_INDEX = new HashMap<>();
 
         putProductIndex(new SimpleSubscriberInfo(AnnotationTest3.class, new SubscriberMethodInfo[] {
                 new SubscriberMethodInfo("productConnected", OnProductConnected.class)
@@ -42,14 +39,6 @@ public class TestAndroidLifecycleSubscriberInfoIndex implements SubscriberInfoIn
         } else {
             return null;
         }
-    }
-
-    @Override
-    public Set<Class<?>> getSubscriberClasses() {
-        Set<Class<?>> classes = new HashSet<>();
-        classes.addAll(PRODUCT_SUBSCRIBER_INDEX.keySet());
-        classes.addAll(ACTIVITY_SUBSCRIBER_INDEX.keySet());
-        return classes;
     }
 
     @Override

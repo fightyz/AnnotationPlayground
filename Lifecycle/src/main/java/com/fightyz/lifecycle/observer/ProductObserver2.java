@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.fightyz.lifecycle.LifecycleException;
 import com.fightyz.lifecycle.ObserverHolder2;
-import com.fightyz.lifecycle.SubscriberMethod;
+import com.fightyz.lifecycle.meta.SubscriberMethod;
 import com.fightyz.lifecycle.annotation.OnProductConnected;
 import com.fightyz.lifecycle.annotation.OnProductDisconnected;
 import com.fightyz.lifecycle.event.IEvent;
@@ -29,6 +29,9 @@ public class ProductObserver2 extends AbstractObserver2 {
     private Set<SubscriberInfoIndex> subscriberInfoIndexes = new HashSet<>();
 
     public ProductObserver2(SubscriberInfoIndex... subscriberInfoIndexes) {
+        if (subscriberInfoIndexes == null || subscriberInfoIndexes.length == 0) {
+            throw new RuntimeException("ProductObserver2 subscriberInfoIndexes");
+        }
         for (SubscriberInfoIndex infoIndex : subscriberInfoIndexes) {
             addObserverClasses(infoIndex.getProductSubscriberClasses());
         }
