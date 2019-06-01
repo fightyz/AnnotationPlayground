@@ -82,47 +82,45 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
-        if (!roundEnvironment.processingOver() && !annotations.isEmpty()) {
-            typeElements = ProcessingUtils.getTypeElementsToProcess(
-                    roundEnvironment.getRootElements(), annotations);
+        typeElements = ProcessingUtils.getTypeElementsToProcess(
+                roundEnvironment.getRootElements(), annotations);
 
-            for (TypeElement typeElement : typeElements) {
-                String packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
-                String typeName = typeElement.getSimpleName().toString();
-                PackageElement packageElement = (PackageElement) typeElement.getEnclosingElement();
-                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package name %s", packageName));
-                messager.printMessage(Diagnostic.Kind.NOTE, String.format("class name %s", typeName));
-                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package simple name %s", packageElement.getSimpleName()));
-                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package enclosing element %s", packageElement.getEnclosingElement()));
-                messager.printMessage(Diagnostic.Kind.NOTE, String.format("package enclosed element %s", packageElement.getEnclosedElements()));
-            }
-
-            String index = processingEnv.getOptions().get(OPTION_LIFECYCLE_INDEX);
-            if (index == null) {
-                messager.printMessage(Diagnostic.Kind.NOTE, "No option " + OPTION_LIFECYCLE_INDEX +
-                        " passed to annotation processor");
-                return false;
-            }
-
-            int period = index.lastIndexOf('.');
-            String indexPackage = period != -1 ? index.substring(0, period) : null;
-            String clazz = index.substring(period + 1);
-            round++;
-            messager.printMessage(Diagnostic.Kind.NOTE, "Processing round " + round + ", new annotations " +
-                    !annotations.isEmpty() + ", processingOver: " + roundEnvironment.processingOver());
-            if (roundEnvironment.processingOver()) {
-                if (!annotations.isEmpty()) {
-                    messager.printMessage(Diagnostic.Kind.ERROR,
-                            "Unexpected processing state: annotations still available after processing over");
-                    return false;
-                }
-            }
-            if (annotations.isEmpty()) {
-                return false;
-            }
-            collectSubscribers(annotations, roundEnvironment, messager);
-            generateIndexFile(indexPackage, clazz);
+        for (TypeElement typeElement : typeElements) {
+            String packageName = elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
+            String typeName = typeElement.getSimpleName().toString();
+            PackageElement packageElement = (PackageElement) typeElement.getEnclosingElement();
+            messager.printMessage(Diagnostic.Kind.NOTE, String.format("package name %s", packageName));
+            messager.printMessage(Diagnostic.Kind.NOTE, String.format("class name %s", typeName));
+            messager.printMessage(Diagnostic.Kind.NOTE, String.format("package simple name %s", packageElement.getSimpleName()));
+            messager.printMessage(Diagnostic.Kind.NOTE, String.format("package enclosing element %s", packageElement.getEnclosingElement()));
+            messager.printMessage(Diagnostic.Kind.NOTE, String.format("package enclosed element %s", packageElement.getEnclosedElements()));
         }
+
+        String index = processingEnv.getOptions().get(OPTION_LIFECYCLE_INDEX);
+        if (index == null) {
+            messager.printMessage(Diagnostic.Kind.NOTE, "No option " + OPTION_LIFECYCLE_INDEX +
+                    " passed to annotation processor");
+            return false;
+        }
+
+        int period = index.lastIndexOf('.');
+        String indexPackage = period != -1 ? index.substring(0, period) : null;
+        String clazz = index.substring(period + 1);
+        round++;
+        messager.printMessage(Diagnostic.Kind.NOTE, "Processing round " + round + ", new annotations " +
+                !annotations.isEmpty() + ", processingOver: " + roundEnvironment.processingOver());
+        if (roundEnvironment.processingOver()) {
+            if (!annotations.isEmpty()) {
+                messager.printMessage(Diagnostic.Kind.ERROR,
+                        "Unexpected processing state: annotations still available after processing over");
+                return false;
+            }
+        }
+        if (annotations.isEmpty()) {
+            return false;
+        }
+        collectSubscribers(annotations, roundEnvironment, messager);
+        generateIndexFile(indexPackage, clazz);
         return true;
     }
 
