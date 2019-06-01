@@ -256,12 +256,12 @@ public class LifecycleAnnotationProcessor extends AbstractProcessor {
                                 SubscriberInfo.class, productSubscriberIndex)
                         .addStatement("$T activityInfo = $N.get(subscriberClass)",
                                 SubscriberInfo.class, activitySubscriberIndex)
-                        .beginControlFlow("if (productInfo != null)")
-                        .addStatement("return productInfo")
+                        .beginControlFlow("if (productInfo != null && activityInfo != null)")
+                        .addStatement("return $T.combine(productInfo, activityInfo)", SimpleSubscriberInfo.class)
                         .nextControlFlow("else if (activityInfo != null)")
                         .addStatement("return activityInfo")
                         .nextControlFlow("else")
-                        .addStatement("return null")
+                        .addStatement("return productInfo")
                         .endControlFlow()
                         .build())
                 .build();

@@ -25,11 +25,11 @@ public class MyLifecycleSubscriberInfoIndex implements SubscriberInfoIndex {
         ACTIVITY_SUBSCRIBER_INDEX = new HashMap<>();
 
         putProductIndex(new SimpleSubscriberInfo(AnnotationTest1.class, new SubscriberMethodInfo[]{
-                new SubscriberMethodInfo("onProductConnected", OnProductConnected.class)
+                new SubscriberMethodInfo<>("onProductConnected", OnProductConnected.class)
         }));
 
         putActivityIndex(new SimpleSubscriberInfo(AnnotationTest1.class, new SubscriberMethodInfo[]{
-                new SubscriberMethodInfo("onActivityCreated", OnActivityCreated.class)
+                new SubscriberMethodInfo<>("onActivityCreated", OnActivityCreated.class)
         }));
     }
 
@@ -39,8 +39,7 @@ public class MyLifecycleSubscriberInfoIndex implements SubscriberInfoIndex {
         SubscriberInfo activityInfo = ACTIVITY_SUBSCRIBER_INDEX.get(subscriberClass);
 
         if (productInfo != null && activityInfo != null) {
-            SubscriberInfo result = SimpleSubscriberInfo.combine(productInfo, activityInfo);
-            return result;
+            return SimpleSubscriberInfo.combine(productInfo, activityInfo);
         } else if (productInfo != null) {
             return productInfo;
         } else {

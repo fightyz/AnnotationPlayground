@@ -13,6 +13,8 @@ public class BaseApplication extends Application {
         super.onCreate();
 //        Lifecycle.build(this);
         Lifecycle2.Builder builder = new Lifecycle2.Builder();
+//        builder.addIndex(new MyLifecycleSubscriberInfoIndex())
+//                .addIndex(new TestAndroidLifecycleSubscriberInfoIndex());
         builder.addIndex(new MyLifecycleIndex())
                 .addIndex(new TestAndroidModuleLifecycleIndex());
         builder.build(this);

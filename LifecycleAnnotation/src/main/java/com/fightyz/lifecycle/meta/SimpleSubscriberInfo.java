@@ -56,7 +56,7 @@ public class SimpleSubscriberInfo implements SubscriberInfo {
             for (SubscriberInfo info : infos) {
                 subscriberClass = info.getSubscriberClass();
                 for (SubscriberMethod subscriberMethod : info.getSubscriberMethods()) {
-                    subscriberMethodInfos.add(new SubscriberMethodInfo(subscriberMethod.mMethodString, subscriberMethod.mAnnotation.getClass()));
+                    subscriberMethodInfos.add(new SubscriberMethodInfo<>(subscriberMethod.mMethodString, subscriberMethod.mAnnotation.annotationType()));
                 }
             }
             SubscriberMethodInfo[] subscriberMethodInfoArray = new SubscriberMethodInfo[subscriberMethodInfos.size()];

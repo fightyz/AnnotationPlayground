@@ -19,11 +19,11 @@ public class TestAndroidLifecycleSubscriberInfoIndex implements SubscriberInfoIn
     static {
 
         putProductIndex(new SimpleSubscriberInfo(AnnotationTest3.class, new SubscriberMethodInfo[] {
-                new SubscriberMethodInfo("productConnected", OnProductConnected.class)
+                new SubscriberMethodInfo<>("productConnected", OnProductConnected.class)
         }));
 
         putActivityIndex(new SimpleSubscriberInfo(AnnotationTest3.class, new SubscriberMethodInfo[]{
-                new SubscriberMethodInfo("activityCreated", OnActivityCreated.class)
+                new SubscriberMethodInfo<>("activityCreated", OnActivityCreated.class)
         }));
     }
 
@@ -32,12 +32,12 @@ public class TestAndroidLifecycleSubscriberInfoIndex implements SubscriberInfoIn
         SubscriberInfo productInfo = PRODUCT_SUBSCRIBER_INDEX.get(subscriberClass);
         SubscriberInfo activityInfo = ACTIVITY_SUBSCRIBER_INDEX.get(subscriberClass);
 
-        if (productInfo != null) {
+        if (productInfo != null && activityInfo != null) {
+            return SimpleSubscriberInfo.combine(productInfo, activityInfo);
+        } else if (productInfo != null) {
             return productInfo;
-        } else if (activityInfo != null) {
-            return activityInfo;
         } else {
-            return null;
+            return activityInfo;
         }
     }
 
